@@ -2,6 +2,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const cors = require("cors"); // cors 패키지 임포트
 require("dotenv").config();
 
 const app = express();
@@ -10,6 +11,14 @@ const secretKey = process.env.NODE_AUTH_SECRET; // 비밀 키
 
 // console.log("node auth ", process.env.NODE_AUTH_SECRET);
 app.use(express.json());
+
+// 특정 출처 허용 예시
+const corsOptions = {
+  origin: "http://localhost:3002", // 허용할 출처
+  optionsSuccessStatus: 200, // 일부 브라우저의 옵션 요청 문제 해결을 위한 상태 코드
+};
+// CORS 미들웨어 사용
+app.use(cors(corsOptions));
 
 const users = [
   {
@@ -60,8 +69,13 @@ const verifyToken = (req, res, next) => {
 };
 
 // 보호된 엔드포인트
-app.get("/protected", verifyToken, (req, res) => {
-  res.status(200).send(`Hello User ${req.userId}, you are authenticated`);
+app.get("/api/protected", verifyToken, (req, res) => {
+  console.log("여기 호출", req);
+  // res.status(200).send(`Hello User ${req.userId}, you are authenticated`);
+  res.status(200).json({
+    message: "Hello User, you are authenticated",
+    userId: req.userId,
+  });
 });
 
 app.listen(port, () => {
