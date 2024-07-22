@@ -2,11 +2,13 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 const app = express();
-const port = 3001;
-const secretKey = "TEST"; // 비밀 키
+const port = 8000;
+const secretKey = process.env.NODE_AUTH_SECRET; // 비밀 키
 
+// console.log("node auth ", process.env.NODE_AUTH_SECRET);
 app.use(express.json());
 
 const users = [
