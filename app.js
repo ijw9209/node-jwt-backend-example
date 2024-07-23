@@ -52,11 +52,19 @@ app.post("/login", (req, res) => {
 
 // 인증 미들웨어
 const verifyToken = (req, res, next) => {
-  const token = req.headers["x-access-token"];
+  console.log("[req]", req);
+  const authHeader = req.headers["authorization"];
+  console.log("Authorization Header:", authHeader);
 
-  if (!token) {
+  if (!authHeader) {
     return res.status(403).send("No token provided");
   }
+  // Bearer 접두사 제거
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice(7, authHeader.length)
+    : authHeader;
+
+  console.log("Extracted Token:", token);
 
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
@@ -70,7 +78,7 @@ const verifyToken = (req, res, next) => {
 
 // 보호된 엔드포인트
 app.get("/api/protected", verifyToken, (req, res) => {
-  console.log("여기 호출", req);
+  console.log("여기 호출111", req, verifyToken);
   // res.status(200).send(`Hello User ${req.userId}, you are authenticated`);
   res.status(200).json({
     message: "Hello User, you are authenticated",
